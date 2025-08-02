@@ -1,0 +1,7 @@
+[defaults]
+url=https://sentry.io/
+org=coflow
+project=coflow
+
+[auth]
+token=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

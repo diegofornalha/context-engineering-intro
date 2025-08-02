@@ -141,3 +141,4 @@ Thumbs.db
 # Project specific
 .claude/
 .cursorrules
+sentry-mcp-standalone/node_modules
