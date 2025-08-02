@@ -6,6 +6,32 @@ authentication system to handle both organization-level and
 database-level operations, making it easy to manage and query Turso
 databases directly from LLMs.
 
+## 📁 Scripts de Sincronização
+
+O projeto inclui scripts avançados para sincronização de conhecimento:
+
+### 🚀 Scripts Disponíveis
+- **`scripts/sync-knowledge-via-mcp.py`** - Scan e preparação de conhecimento
+- **`scripts/integrate-with-mcp.py`** - Integração com MCP Turso
+- **`scripts/auto-sync-knowledge.sh`** - Automação de sincronização
+- **`scripts/setup-scripts.sh`** - Setup e configuração
+
+### 🛠️ Uso Rápido
+```bash
+cd scripts
+./setup-scripts.sh          # Configurar scripts
+./quick-sync.sh             # Execução rápida
+./auto-sync-knowledge.sh auto  # Automação
+```
+
+### 📊 Monitoramento
+```bash
+./auto-sync-knowledge.sh status    # Ver status
+./auto-sync-knowledge.sh integrity # Verificar integridade
+```
+
+Veja [scripts/README.md](scripts/README.md) para documentação completa.
+
 <a href="https://glama.ai/mcp/servers/hnkzlqoh92">
   <img width="380" height="200" src="https://glama.ai/mcp/servers/hnkzlqoh92/badge" alt="mcp-turso-cloud MCP server" />
 </a>

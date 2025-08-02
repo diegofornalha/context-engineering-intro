@@ -20,35 +20,14 @@
 ## 🔧 Configurações Implementadas
 
 ### Arquivo .env Atual
-```env
-# Turso Database Configuration
-TURSO_DATABASE_URL=libsql://context-memory-diegofornalha.aws-us-east-1.turso.io
-TURSO_AUTH_TOKEN=eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTQxNzIwODYsImlkIjoiOTUwY2ExMGUtN2EzMi00ODgwLTkyYjgtOTNkMTdmZTZjZTBkIiwicmlkIjoiZWU2YTJlNmYtMDViYy00NWIzLWEyOTgtN2Q0NzE3NTE0YjRiIn0.aFmJW5X557_TVqJUQjY6ffNsbn29U9mKJJYckLl_QiHN3m82Z-jZaaM5wpdecWI3JCWdeyCVX9h7NwVvj1w0Cg
 
 # MCP Server Configuration
-MCP_SERVER_NAME=mcp-turso-memory
-MCP_SERVER_VERSION=1.0.0
+
 
 # Optional: Project Configuration
-PROJECT_NAME=context-engineering-intro
-PROJECT_VERSION=1.0.0
-ENVIRONMENT=development
-```
 
 ### Arquivo .env.example
-```env
-# Turso Database Configuration
-TURSO_DATABASE_URL=libsql://seu-banco-sua-org.aws-us-east-1.turso.io
-TURSO_AUTH_TOKEN=seu-token-aqui
 
-# MCP Server Configuration
-MCP_SERVER_NAME=mcp-turso-memory
-MCP_SERVER_VERSION=1.0.0
-
-# Optional: Project Configuration
-PROJECT_NAME=meu-projeto-memoria
-PROJECT_VERSION=1.0.0
-ENVIRONMENT=development
 ```
 
 ## 🛠️ Modificações Realizadas
