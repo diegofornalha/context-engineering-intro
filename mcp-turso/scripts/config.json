@@ -1,0 +1,18 @@
+{
+  "sync": {
+    "enabled": true,
+    "interval_hours": 6,
+    "max_files_per_batch": 10,
+    "log_level": "info"
+  },
+  "mcp": {
+    "database": "context-memory",
+    "table": "turso_agent_knowledge",
+    "timeout_seconds": 30
+  },
+  "paths": {
+    "docs_turso": "../../docs-turso",
+    "logs": "../logs",
+    "reports": "."
+  }
+}
