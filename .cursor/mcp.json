@@ -4,6 +4,11 @@
       "type": "stdio",
       "command": "./sentry-mcp-cursor/start-cursor.sh",
       "args": []
+    },
+    "turso": {
+      "type": "stdio",
+      "command": "./mcp-turso-cloud/start-claude.sh",
+      "args": []
     }
   }
 } 
