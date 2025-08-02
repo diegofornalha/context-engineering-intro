@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "sentry": {
+      "command": "/Users/agents/Desktop/context-engineering-intro/mcp-sentry/start.sh",
+      "args": [],
+      "env": {
+        "SENTRY_DSN": "https://782bbb46ddaa4e64a9a705e64f513985@o927801.ingest.us.sentry.io/5877334",
+        "SENTRY_AUTH_TOKEN": "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",
+        "SENTRY_ORG": "coflow",
+        "SENTRY_API_URL": "https://sentry.io/api/0/"
+      }
+    }
+  }
+}

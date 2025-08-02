@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "sentry": {
+      "type": "stdio",
+      "command": "./mcp-sentry/start-cursor.sh",
+      "args": []
+    },
+    "turso": {
+      "type": "stdio",
+      "command": "./mcp-turso-cloud/start-claude.sh",
+      "args": []
+    }
+  }
+} 
