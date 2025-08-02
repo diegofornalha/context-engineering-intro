@@ -1,0 +1,53 @@
+Arquivos restantes para inserir:
+
+Batch 1 (10 arquivos):
+  - 01-getting-started/GUIA_FINAL_USO.md
+  - 01-getting-started/USO_NATURAL_CURSOR_AGENT.md
+  - 05-sentry-monitoring/SENTRY_MCP_DOCUMENTATION_README.md
+  - 05-sentry-monitoring/SENTRY_ERRORS_REPORT.md
+  - 05-sentry-monitoring/SENTRY_MCP_ERRORS_DOCUMENTATION.md
+  - 07-project-organization/PROJETO_VIVO_ADAPTATIVO.md
+  - 07-project-organization/README.md
+  - 07-project-organization/ESTRUTURA_ORGANIZACAO.md
+  - 07-project-organization/plan.md
+  - 03-turso-database/README.md
+
+Batch 2 (10 arquivos):
+  - 02-mcp-integration/README.md
+  - 06-system-status/README.md
+  - 06-system-status/completed/SISTEMA_DOCS_CLUSTERS_FUNCIONANDO.md
+  - 06-system-status/current/MEMORY_SYSTEM_SUMMARY.md
+  - 06-system-status/current/SISTEMA_FINAL_SIMPLIFICADO_FUNCIONANDO.md
+  - 06-system-status/current/MEMORY_SYSTEM_STATUS.md
+  - 06-system-status/current/TURSO_MCP_STATUS.md
+  - 02-mcp-integration/configuration/CONFIGURACAO_CURSOR_MCP.md
+  - 02-mcp-integration/configuration/ATIVACAO_MCP_REAL_CURSOR.md
+  - 02-mcp-integration/configuration/MCP_ENV_CAPABILITIES.md
+
+Batch 3 (10 arquivos):
+  - 02-mcp-integration/implementation/MCP_SYNC_INTELIGENTE_IMPLEMENTADO.md
+  - 02-mcp-integration/implementation/INTEGRACAO_TURSO_MCP_FINAL.md
+  - 02-mcp-integration/reference/MCP_SERVERS_STATUS.md
+  - 02-mcp-integration/reference/mcp-comparison-diagram.md
+  - 03-turso-database/configuration/TURSO_CONFIGURATION_SUMMARY.md
+  - 03-turso-database/configuration/ENV_CONFIGURATION_SUMMARY.md
+  - 03-turso-database/documentation/GUIA_COMPLETO_TURSO_MCP.md
+  - 03-turso-database/documentation/TURSO_MEMORY_README.md
+  - 03-turso-database/migration/MCP_TURSO_MIGRATION_PLAN.md
+  - 03-turso-database/migration/DOCS_TURSO_MIGRATION_SUCCESS.md
+
+Batch 4 (10 arquivos):
+  - archive/duplicates/INTEGRACAO_PRP_MCP_TURSO.md
+  - archive/duplicates/GUIA_INTEGRACAO_FINAL.md
+  - archive/duplicates/INTEGRACAO_AGENTE_MCP_CURSOR.md
+  - archive/duplicates/ENV_CONFIGURATION_EXPLANATION.md
+  - archive/duplicates/GUIA_USO_CURSOR_AGENT_TURSO.md
+  - archive/deprecated/SOLUCAO_MCP_TURSO.md
+  - archive/deprecated/IMPLEMENTACAO_RAPIDA.md
+  - archive/deprecated/diagnostico-mcp.md
+  - 04-prp-system/status/PRP_TABELAS_STATUS.md
+  - 04-prp-system/guides/README_PRP_TURSO.md
+
+Batch 5 (1 arquivos):
+  - 04-prp-system/guides/PRP_DATABASE_GUIDE.md
+
