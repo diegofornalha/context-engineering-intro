@@ -9,10 +9,10 @@ import os
 import sys
 from pathlib import Path
 
-# Adicionar o diretório agents ao path
-sys.path.insert(0, str(Path(__file__).parent / "agents"))
+# Adicionar o diretório prp-agent ao path
+sys.path.insert(0, str(Path(__file__).parent.parent / "prp-agent"))
 
-from agents.settings import settings
+from prp_agent.agents.settings import settings
 
 def show_current_config():
     """Mostra a configuração atual de idioma."""

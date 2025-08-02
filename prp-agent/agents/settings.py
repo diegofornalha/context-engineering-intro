@@ -27,14 +27,26 @@ class Settings(BaseSettings):
     analysis_timeout: int = Field(default=30, description="Timeout para análises em segundos")
     default_session_id: str = Field(default="prp-agent-session", description="ID da sessão padrão")
     
+    # Language Configuration
+    default_language: str = Field(default="pt-br", description="Idioma padrão para criação de PRPs")
+    language_name: str = Field(default="Português do Brasil", description="Nome do idioma padrão")
+    use_default_language: bool = Field(default=True, description="Usar idioma padrão automaticamente")
+    
+    # Sentry Configuration (Optional)
+    sentry_dsn: str = Field(default="", description="Sentry DSN")
+    sentry_auth_token: str = Field(default="", description="Sentry Auth Token")
+    sentry_org: str = Field(default="", description="Sentry Organization")
+    sentry_api_url: str = Field(default="", description="Sentry API URL")
+    
     # Logging Configuration
     log_level: str = Field(default="INFO", description="Nível de logging")
     log_file: str = Field(default="prp_agent.log", description="Arquivo de log")
     
-    class Config:
-        env_file = ".env"
-        case_sensitive = False
-        env_prefix = "LLM_"
+    model_config = {
+        "env_file": ".env",
+        "case_sensitive": False,
+        "extra": "allow"  # Permitir campos extras
+    }
 
 # Instância global das configurações
 settings = Settings() 
