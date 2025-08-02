@@ -1,142 +1,112 @@
 /**
- * Token management for the Turso MCP server
+ * Enhanced Token Manager for Turso MCP
+ * Based on official Turso documentation
  */
 import { TursoApiError } from '../common/errors.js';
-import { CachedToken, TokenCache } from '../common/types.js';
 import { get_config } from '../config.js';
+import * as organization_client from './organization.js';
 
-// In-memory token cache
-const token_cache: TokenCache = {};
-
-/**
- * Parse a JWT token to extract its expiration date
- */
-function get_token_expiration(jwt: string): Date {
-	try {
-		// JWT tokens consist of three parts separated by dots
-		const parts = jwt.split('.');
-		if (parts.length !== 3) {
-			throw new Error('Invalid JWT format');
-		}
-
-		// The second part contains the payload, which is base64 encoded
-		const payload = JSON.parse(
-			Buffer.from(parts[1], 'base64').toString('utf8'),
-		);
-
-		// The exp claim contains the expiration timestamp in seconds
-		if (typeof payload.exp !== 'number') {
-			throw new Error('JWT missing expiration');
-		}
-
-		// Convert to milliseconds and create a Date object
-		return new Date(payload.exp * 1000);
-	} catch (error) {
-		// If parsing fails, set a default expiration of 1 hour from now
-		console.error('Error parsing JWT expiration:', error);
-		const expiration = new Date();
-		expiration.setHours(expiration.getHours() + 1);
-		return expiration;
-	}
+// Token cache with expiration
+interface CachedToken {
+  token: string;
+  expiresAt: number;
+  permission: 'full-access' | 'read-only';
 }
 
-/**
- * Generate a new token for a database using the organization token
- */
-export async function generate_database_token(
-	database_name: string,
-	permission: 'full-access' | 'read-only' = 'full-access',
-): Promise<string> {
-	const config = get_config();
-	const url = `https://api.turso.tech/v1/organizations/${config.TURSO_ORGANIZATION}/databases/${database_name}/auth/tokens`;
-
-	try {
-		const response = await fetch(url, {
-			method: 'POST',
-			headers: {
-				Authorization: `Bearer ${config.TURSO_API_TOKEN}`,
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify({
-				expiration: config.TOKEN_EXPIRATION,
-				permission,
-			}),
-		});
-
-		if (!response.ok) {
-			const errorData = await response.json().catch(() => ({}));
-			const errorMessage = errorData.error || response.statusText;
-			throw new TursoApiError(
-				`Failed to generate token for database ${database_name}: ${errorMessage}`,
-				response.status,
-			);
-		}
-
-		const data = await response.json();
-		return data.jwt;
-	} catch (error) {
-		if (error instanceof TursoApiError) {
-			throw error;
-		}
-		throw new TursoApiError(
-			`Failed to generate token for database ${database_name}: ${
-				(error as Error).message
-			}`,
-			500,
-		);
-	}
-}
+const token_cache: Record<string, CachedToken> = {};
 
 /**
- * Get a token for a database, using environment variables directly
+ * Get a database token with automatic refresh
  */
 export async function get_database_token(
-	database_name: string,
-	permission: 'full-access' | 'read-only' = 'full-access',
+  database_name: string,
+  permission: 'full-access' | 'read-only' = 'full-access',
 ): Promise<string> {
-	// Use TURSO_AUTH_TOKEN from environment directly if available
-	const authToken = process.env.TURSO_AUTH_TOKEN;
-	if (authToken) {
-		console.error(`[TokenManager] Using TURSO_AUTH_TOKEN from environment for database ${database_name}`);
-		return authToken;
-	}
+  const cache_key = `${database_name}:${permission}`;
+  const cached = token_cache[cache_key];
 
-	// Check if we have a valid token in the cache
-	const cached_token = token_cache[database_name];
-	if (cached_token && cached_token.permission === permission) {
-		// Check if the token is still valid (not expired)
-		if (cached_token.expiresAt > new Date()) {
-			return cached_token.jwt;
-		}
-	}
+  // Check if we have a valid cached token
+  if (cached && Date.now() < cached.expiresAt) {
+    return cached.token;
+  }
 
-	// Generate a new token
-	const jwt = await generate_database_token(
-		database_name,
-		permission,
-	);
+  try {
+    // Generate a new token
+    const token = await organization_client.generate_database_token(
+      database_name,
+      permission,
+    );
 
-	// Cache the token
-	token_cache[database_name] = {
-		jwt,
-		expiresAt: get_token_expiration(jwt),
-		permission,
-	};
+    // Cache the token with expiration (1 hour)
+    token_cache[cache_key] = {
+      token,
+      expiresAt: Date.now() + 60 * 60 * 1000, // 1 hour
+      permission,
+    };
 
-	return jwt;
+    return token;
+  } catch (error) {
+    throw new TursoApiError(
+      `Failed to get token for database ${database_name}: ${
+        (error as Error).message
+      }`,
+      500,
+    );
+  }
 }
 
 /**
- * Remove expired tokens from the cache
+ * Clear token cache for a specific database
  */
-export function cleanup_expired_tokens(): void {
-	const now = new Date();
-	for (const [database_name, token] of Object.entries(token_cache)) {
-		if ((token as CachedToken).expiresAt <= now) {
-			delete token_cache[database_name];
-		}
-	}
+export function clear_token_cache(database_name?: string): void {
+  if (database_name) {
+    // Clear specific database tokens
+    Object.keys(token_cache).forEach(key => {
+      if (key.startsWith(`${database_name}:`)) {
+        delete token_cache[key];
+      }
+    });
+  } else {
+    // Clear all tokens
+    Object.keys(token_cache).forEach(key => {
+      delete token_cache[key];
+    });
+  }
 }
 
-// Set up a periodic cleanup of expired tokens (every hour)
-setInterval(cleanup_expired_tokens, 60 * 60 * 1000);
+/**
+ * Get token cache status
+ */
+export function get_token_cache_status(): Record<string, any> {
+  const status: Record<string, any> = {};
+  
+  Object.entries(token_cache).forEach(([key, cached]) => {
+    const [database, permission] = key.split(':');
+    status[database] = {
+      permission,
+      expiresAt: new Date(cached.expiresAt).toISOString(),
+      isValid: Date.now() < cached.expiresAt,
+      timeToExpiry: Math.max(0, cached.expiresAt - Date.now()),
+    };
+  });
+
+  return status;
+}
+
+/**
+ * Validate token permissions
+ */
+export function validate_token_permissions(
+  required_permission: 'full-access' | 'read-only',
+  current_permission: 'full-access' | 'read-only',
+): boolean {
+  if (required_permission === 'read-only') {
+    return true; // read-only can access read-only
+  }
+  
+  if (required_permission === 'full-access') {
+    return current_permission === 'full-access'; // full-access required for full-access
+  }
+  
+  return false;
+}

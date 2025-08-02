@@ -56,6 +56,10 @@
 ### 📚 **Documentação**
 
 #### 6. **Documentação Técnica**
+- [x] ✅ **Distinção MCP Claude vs Cursor Agent** - Documentação criada
+  - Criado `docs/mcp-integration/DISTINCAO_MCP_CLAUDE_CURSOR.md`
+  - Evita confusões futuras entre os dois sistemas
+  - Documenta ferramentas disponíveis no Cursor Agent
 - [ ] Atualizar README.md com novas funcionalidades
 - [ ] Criar guias de uso para cada agente
 - [ ] Documentar padrões de integração MCP
@@ -68,13 +72,23 @@
 
 ### 🔧 **Melhorias e Otimizações**
 
-#### 8. **Otimizações de Performance**
+#### 8. **Correções MCP Turso - Ferramentas de Memória**
+- [x] ✅ **Correção de parâmetros SQL** - Implementada
+  - Corrigido `add_conversation` - parâmetros nomeados
+  - Corrigido `add_knowledge` - parâmetros nomeados  
+  - Corrigido `search_knowledge` - parâmetros nomeados
+  - Alterado de parâmetros posicionais para nomeados (`:param`)
+  - Recompilado MCP Turso com correções
+- [ ] Testar ferramentas corrigidas
+- [ ] Validar funcionamento completo
+
+#### 9. **Otimizações de Performance**
 - [ ] Otimizar queries do Turso
 - [ ] Implementar caching inteligente
 - [ ] Otimizar uso de memória
 - [ ] Melhorar latência de resposta
 
-#### 9. **Segurança e Robustez**
+#### 10. **Segurança e Robustez**
 - [ ] Implementar validação robusta de entrada
 - [ ] Adicionar rate limiting
 - [ ] Implementar logging de auditoria
@@ -82,11 +96,27 @@
 
 ### 🚀 **Deploy e Produção**
 
-#### 10. **Preparação para Produção**
+#### 11. **Preparação para Produção**
 - [ ] Configurar variáveis de ambiente
 - [ ] Implementar health checks
 - [ ] Configurar monitoring em produção
 - [ ] Preparar scripts de deploy
+
+---
+
+## 🔍 **Descoberto Durante o Trabalho**
+
+### **2025-08-02 - Correções MCP Turso**
+- ✅ **Problema identificado:** Ferramentas de memória com erro de parâmetros
+- ✅ **Solução aplicada:** Conversão de parâmetros posicionais para nomeados
+- ✅ **Documentação criada:** Distinção clara entre MCP Claude vs Cursor Agent
+- ✅ **Arquivos modificados:** `mcp-turso/src/tools/handler.ts`
+- ✅ **Recompilação:** MCP Turso atualizado com correções
+
+### **Próximos Passos:**
+- [ ] Testar ferramentas corrigidas (`add_conversation`, `add_knowledge`, `search_knowledge`)
+- [ ] Validar funcionamento completo do sistema de memória
+- [ ] Documentar padrões de uso das ferramentas MCP no Cursor Agent
 
 ---
 

@@ -802,15 +802,15 @@ export function register_tools(server: Server): void {
 
 				const insert_query = `
 					INSERT INTO conversations (session_id, user_id, message, response, context)
-					VALUES (?, ?, ?, ?, ?)
+					VALUES (:session_id, :user_id, :message, :response, :context)
 				`;
 
 				const params = {
-					1: session_id,
-					2: user_id || null,
-					3: message,
-					4: response || null,
-					5: context || null,
+					':session_id': session_id,
+					':user_id': user_id || null,
+					':message': message,
+					':response': response || null,
+					':context': context || null,
 				};
 
 				const result = await database_client.execute_query(
@@ -859,20 +859,17 @@ export function register_tools(server: Server): void {
 
 				let query = 'SELECT * FROM conversations';
 				const params: Record<string, any> = {};
-				let param_count = 0;
 
 				if (session_id) {
-					param_count++;
-					query += ` WHERE session_id = ?`;
-					params[param_count] = session_id;
+					query += ` WHERE session_id = :session_id`;
+					params[':session_id'] = session_id;
 				}
 
 				query += ' ORDER BY timestamp DESC';
 
 				if (limit) {
-					param_count++;
-					query += ' LIMIT ?';
-					params[param_count] = limit;
+					query += ' LIMIT :limit';
+					params[':limit'] = limit;
 				}
 
 				const result = await database_client.execute_query(
@@ -924,14 +921,14 @@ export function register_tools(server: Server): void {
 
 				const insert_query = `
 					INSERT INTO knowledge_base (topic, content, source, tags)
-					VALUES (?, ?, ?, ?)
+					VALUES (:topic, :content, :source, :tags)
 				`;
 
 				const params = {
-					1: topic,
-					2: content,
-					3: source || null,
-					4: tags || null,
+					':topic': topic,
+					':content': content,
+					':source': source || null,
+					':tags': tags || null,
 				};
 
 				const result = await database_client.execute_query(
@@ -982,26 +979,23 @@ export function register_tools(server: Server): void {
 
 				let search_query = `
 					SELECT * FROM knowledge_base 
-					WHERE topic LIKE ? OR content LIKE ?
+					WHERE topic LIKE :query1 OR content LIKE :query2
 				`;
 				const params: Record<string, any> = {
-					1: `%${query}%`,
-					2: `%${query}%`,
+					':query1': `%${query}%`,
+					':query2': `%${query}%`,
 				};
-				let param_count = 2;
 
 				if (tags) {
-					param_count++;
-					search_query += ' AND tags LIKE ?';
-					params[param_count] = `%${tags}%`;
+					search_query += ' AND tags LIKE :tags';
+					params[':tags'] = `%${tags}%`;
 				}
 
 				search_query += ' ORDER BY priority DESC, created_at DESC';
 
 				if (limit) {
-					param_count++;
-					search_query += ' LIMIT ?';
-					params[param_count] = limit;
+					search_query += ' LIMIT :limit';
+					params[':limit'] = limit;
 				}
 
 				const result = await database_client.execute_query(
