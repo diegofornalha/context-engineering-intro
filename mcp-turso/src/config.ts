@@ -11,6 +11,8 @@ function loadMultipleEnvFiles(): void {
 	const envPaths = [
 		'.env',                    // Root project .env
 		'.env.turso',              // Turso-specific .env
+		'turso-config.env',        // Turso config file
+		'env.turso',               // Turso environment file
 		'mcp-turso-cloud/.env',    // MCP-specific .env
 		'../.env',                 // Parent directory .env
 		'../../.env',              // Grandparent directory .env
@@ -52,6 +54,9 @@ export const ConfigSchema = z.object({
 	// Optional default database
 	TURSO_DEFAULT_DATABASE: z.string().optional(),
 
+	// Database-specific authentication token
+	TURSO_AUTH_TOKEN: z.string().optional(),
+
 	// Token management settings
 	TOKEN_EXPIRATION: z.string().default('7d'),
 	TOKEN_PERMISSION: z
@@ -69,6 +74,7 @@ export function load_config(): Config {
 			TURSO_API_TOKEN: process.env.TURSO_API_TOKEN,
 			TURSO_ORGANIZATION: process.env.TURSO_ORGANIZATION,
 			TURSO_DEFAULT_DATABASE: process.env.TURSO_DEFAULT_DATABASE,
+			TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
 			TOKEN_EXPIRATION: process.env.TOKEN_EXPIRATION || '7d',
 			TOKEN_PERMISSION: process.env.TOKEN_PERMISSION || 'full-access',
 		});

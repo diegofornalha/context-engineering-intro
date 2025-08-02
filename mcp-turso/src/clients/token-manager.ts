@@ -88,12 +88,19 @@ export async function generate_database_token(
 }
 
 /**
- * Get a token for a database, generating a new one if necessary
+ * Get a token for a database, using environment variables directly
  */
 export async function get_database_token(
 	database_name: string,
 	permission: 'full-access' | 'read-only' = 'full-access',
 ): Promise<string> {
+	// Use TURSO_AUTH_TOKEN from environment directly if available
+	const authToken = process.env.TURSO_AUTH_TOKEN;
+	if (authToken) {
+		console.error(`[TokenManager] Using TURSO_AUTH_TOKEN from environment for database ${database_name}`);
+		return authToken;
+	}
+
 	// Check if we have a valid token in the cache
 	const cached_token = token_cache[database_name];
 	if (cached_token && cached_token.permission === permission) {

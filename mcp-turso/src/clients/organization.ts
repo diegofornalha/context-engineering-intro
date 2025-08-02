@@ -21,7 +21,12 @@ function get_organization_id(): string {
  * Get the authorization header for API requests
  */
 function get_auth_header(): { Authorization: string } {
-	return { Authorization: `Bearer ${get_config().TURSO_API_TOKEN}` };
+	// Use TURSO_API_TOKEN from environment directly
+	const apiToken = process.env.TURSO_API_TOKEN;
+	if (!apiToken) {
+		throw new Error('TURSO_API_TOKEN environment variable is required');
+	}
+	return { Authorization: `Bearer ${apiToken}` };
 }
 
 /**
