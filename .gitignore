@@ -141,5 +141,6 @@ Thumbs.db
 # Project specific
 .claude/
 .cursorrules
-sentry-mcp-standalone/node_modules
+sentry-mcp-cursor/node_modules
 cursor10x-mcp
+sentry-mcp-stdio
