@@ -19,8 +19,17 @@ from datetime import datetime
 sys.path.append(str(Path(__file__).parent))
 sys.path.append(str(Path(__file__).parent.parent))
 
-from agents.turso_specialist import TursoSpecialistAgent
-from config.turso_settings import TursoSettings
+from agents.turso_specialist_pydantic_new import (
+    TursoContext,
+    TursoSettings,
+    chat_with_turso_agent,
+    analyze_performance,
+    security_audit,
+    troubleshoot_issue,
+    optimize_system,
+    run_validation_gates,
+    get_system_info
+)
 from tools.turso_manager import TursoManager
 from tools.mcp_integrator import MCPTursoIntegrator
 
@@ -31,7 +40,10 @@ class TursoAgentCLI:
         self.settings = TursoSettings()
         self.turso_manager = TursoManager(self.settings)
         self.mcp_integrator = MCPTursoIntegrator(self.settings)
-        self.agent = TursoSpecialistAgent(
+        
+        # Criar contexto para o agente PydanticAI
+        self.context = TursoContext(
+            session_id=f"cli-session-{datetime.now().isoformat()}",
             turso_manager=self.turso_manager,
             mcp_integrator=self.mcp_integrator,
             settings=self.settings
@@ -153,32 +165,32 @@ class TursoAgentCLI:
     async def handle_performance_analysis(self):
         """Análise de performance"""
         print("\n⚡ PERFORMANCE ANALYSIS:")
-        result = await self.agent.analyze_performance()
+        result = await analyze_performance(self.context)
         print(result)
         
     async def handle_security_audit(self):
         """Auditoria de segurança"""
         print("\n🛡️ SECURITY AUDIT:")
-        result = await self.agent.security_audit()
+        result = await security_audit(self.context)
         print(result)
         
     async def handle_troubleshooting(self):
         """Troubleshooting do sistema"""
         print("\n🔧 TROUBLESHOOTING:")
         issue = input("Descreva o problema: ")
-        result = await self.agent.troubleshoot_issue(issue)
+        result = await troubleshoot_issue(issue, self.context)
         print(result)
         
     async def handle_optimization(self):
         """Otimização do sistema"""
         print("\n📈 SYSTEM OPTIMIZATION:")
-        result = await self.agent.optimize_system()
+        result = await optimize_system(self.context)
         print(result)
         
     async def handle_validation_gates(self):
         """Executa validation gates do PRP"""
         print("\n📋 VALIDATION GATES:")
-        result = await self.agent.run_validation_gates()
+        result = await run_validation_gates(self.context)
         print(result)
         
     async def handle_interactive_chat(self):
@@ -191,13 +203,13 @@ class TursoAgentCLI:
             if user_input.lower() in ['sair', 'exit', 'quit']:
                 break
                 
-            response = await self.agent.chat(user_input)
+            response = await chat_with_turso_agent(user_input, self.context)
             print(f"🤖 Turso Agent: {response}")
             
     async def show_system_info(self):
         """Mostra informações do sistema"""
         print("\n ℹ️ SYSTEM INFO:")
-        info = await self.agent.get_system_info()
+        info = await get_system_info(self.context)
         print(info)
         
     async def run(self):

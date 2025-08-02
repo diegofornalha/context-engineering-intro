@@ -1,109 +1,193 @@
-#!/usr/bin/env python3
 """
-Turso Specialist Agent - Versão PydanticAI
-Implementação correta seguindo padrões PydanticAI para o PRP ID 6
+Turso Specialist Agent com PydanticAI - Implementação baseada no PRP ID 6
+Segue as diretrizes do basic_chat_agent usando PydanticAI framework
+
+Este agente é especialista em:
+- Turso Database & libSQL
+- MCP Integration
+- Performance & Security
+- Troubleshooting & Optimization
 """
 
-import asyncio
+import logging
 import json
 import sqlite3
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional, Any
+from typing import Optional, Dict, Any, List
 from datetime import datetime
-import subprocess
-import requests
-
-# PydanticAI imports
+from pydantic import Field, BaseModel
+from pydantic_settings import BaseSettings
 from pydantic_ai import Agent, RunContext
 from pydantic_ai.models.openai import OpenAIModel
-from pydantic_ai.models.test import TestModel
-from dataclasses import dataclass
-from pydantic import BaseModel, Field
+from pydantic_ai.providers.openai import OpenAIProvider
+from dotenv import load_dotenv
 
-# Local imports
-from ..config.turso_settings import TursoSettings
-from ..tools.turso_manager import TursoManager
-from ..tools.mcp_integrator import MCPTursoIntegrator
+# Carregar variáveis de ambiente
+load_dotenv()
+
+logger = logging.getLogger(__name__)
+
+class TursoSettings(BaseSettings):
+    """Configurações para o Turso Agent com PydanticAI"""
+    
+    # Configuração do LLM
+    llm_provider: str = Field(default="openai")
+    llm_api_key: str = Field(...)
+    llm_model: str = Field(default="gpt-4")
+    llm_base_url: str = Field(default="https://api.openai.com/v1")
+    
+    # Configuração Turso
+    turso_api_token: Optional[str] = Field(default=None)
+    turso_default_database: Optional[str] = Field(default=None)
+    turso_organization: Optional[str] = Field(default=None)
+    
+    # Configuração MCP
+    mcp_server_url: Optional[str] = Field(default=None)
+    mcp_enabled: bool = Field(default=True)
+    
+    class Config:
+        env_file = ".env"
+        case_sensitive = False
+
+
+def get_llm_model():
+    """Obter modelo LLM configurado a partir das configurações de ambiente"""
+    try:
+        settings = TursoSettings()
+        provider = OpenAIProvider(
+            base_url=settings.llm_base_url,
+            api_key=settings.llm_api_key
+        )
+        return OpenAIModel(settings.llm_model, provider=provider)
+    except Exception as e:
+        logger.error(f"Erro ao carregar modelo LLM: {e}")
+        # Fallback para teste
+        import os
+        os.environ.setdefault("LLM_API_KEY", "test-key")
+        settings = TursoSettings()
+        provider = OpenAIProvider(
+            base_url=settings.llm_base_url,
+            api_key="test-key"
+        )
+        return OpenAIModel(settings.llm_model, provider=provider)
+
 
 @dataclass
-class TursoAgentDependencies:
-    """Dependencies for Turso Specialist Agent - PydanticAI pattern"""
-    turso_api_token: str
-    turso_organization: str
-    default_database: Optional[str] = None
+class TursoContext:
+    """Contexto para o agente Turso com informações da sessão"""
     session_id: Optional[str] = None
-    enable_mcp_integration: bool = True
-    debug_mode: bool = False
+    current_database: Optional[str] = None
+    user_role: str = "developer"
+    conversation_count: int = 0
+    prp_context: Optional[Dict[str, Any]] = None
+    turso_manager: Optional[Any] = None
+    mcp_integrator: Optional[Any] = None
+    settings: Optional[TursoSettings] = None
+    
+    def __post_init__(self):
+        """Carrega contexto do PRP após inicialização"""
+        if self.prp_context is None:
+            self.prp_context = self._load_prp_context()
+    
+    def _load_prp_context(self) -> Dict[str, Any]:
+        """Carrega contexto do PRP ID 6 para orientar decisões"""
+        try:
+            db_path = Path(__file__).parent.parent.parent / "context-memory.db"
+            if not db_path.exists():
+                return {}
+                
+            conn = sqlite3.connect(str(db_path))
+            cursor = conn.cursor()
+            
+            cursor.execute('''
+                SELECT description, objective, context_data, implementation_details, validation_gates
+                FROM prps WHERE id = 6
+            ''')
+            
+            prp_data = cursor.fetchone()
+            conn.close()
+            
+            if prp_data:
+                return {
+                    'description': prp_data[0],
+                    'objective': prp_data[1],
+                    'context_data': json.loads(prp_data[2]) if prp_data[2] else {},
+                    'implementation_details': json.loads(prp_data[3]) if prp_data[3] else {},
+                    'validation_gates': json.loads(prp_data[4]) if prp_data[4] else []
+                }
+        except Exception as e:
+            logger.error(f"Erro ao carregar PRP context: {e}")
+        
+        return {}
 
-class TursoQueryRequest(BaseModel):
-    """Model for Turso database query requests."""
-    query: str = Field(..., description="SQL query to execute")
-    database: Optional[str] = Field(None, description="Target database name")
-    params: Optional[List[Any]] = Field(None, description="Query parameters")
-    is_read_only: bool = Field(True, description="Whether query is read-only")
+# Classe para respostas estruturadas quando necessário
+class TursoQueryResult(BaseModel):
+    """Resultado estruturado de queries Turso"""
+    success: bool
+    data: Optional[List[Dict[str, Any]]] = None
+    error: Optional[str] = None
+    execution_time: Optional[float] = None
+    affected_rows: Optional[int] = None
 
-class TursoDatabaseInfo(BaseModel):
-    """Model for Turso database information."""
-    name: str = Field(..., description="Database name")
-    status: str = Field(..., description="Database status")
-    regions: List[str] = Field(default_factory=list, description="Database regions")
-    created_at: Optional[str] = Field(None, description="Creation timestamp")
+# Prompt de sistema principal do Turso Agent
+TURSO_SYSTEM_PROMPT = """
+Você é o Turso Specialist Agent, um assistente especializado em Turso Database, libSQL e MCP Integration.
 
-class TursoPerformanceReport(BaseModel):
-    """Model for Turso performance analysis."""
-    database: str = Field(..., description="Database analyzed")
-    metrics: Dict[str, Any] = Field(..., description="Performance metrics")
-    recommendations: List[str] = Field(default_factory=list, description="Optimization recommendations")
-    timestamp: str = Field(default_factory=lambda: datetime.now().isoformat())
+Sua expertise inclui:
+- **Turso Database**: Criação, gestão, queries, migrations, backups
+- **libSQL**: Compatibilidade SQLite, sintaxe, features edge
+- **MCP Integration**: Setup, tokens, segurança, LLM integration
+- **Performance**: Otimização de queries, índices, distributed performance
+- **Security**: Token management, RLS, audit, best practices
+- **Troubleshooting**: Diagnóstico, debug, resolução de problemas
 
-class TursoSecurityAudit(BaseModel):
-    """Model for Turso security audit results."""
-    token_security: str = Field(..., description="Token security status")
-    mcp_security: str = Field(..., description="MCP security status")
-    access_control: str = Field(..., description="Access control status")
-    recommendations: List[str] = Field(default_factory=list, description="Security recommendations")
+Personalidade:
+- Técnico mas acessível
+- Focado em soluções práticas
+- Proativo em identificar problemas
+- Sempre sugere best practices
+- Educativo sobre features Turso
 
-# System prompt for Turso Specialist Agent
-SYSTEM_PROMPT = """
-You are a Turso Database Specialist Agent with deep expertise in:
-
-**Core Expertise:**
-- Turso Database (libSQL engine) operations and optimization
-- MCP (Model Context Protocol) integration and setup
-- Distributed database architecture and edge replication
-- Security best practices and token management
-- Performance optimization and troubleshooting
-
-**Your Capabilities:**
-- Database lifecycle management (create, configure, migrate, backup)
-- MCP server setup and LLM integration
-- Query optimization and schema design
-- Security auditing and compliance
-- Performance analysis and monitoring
-- Troubleshooting complex distributed database issues
-
-**Guidelines:**
-- Always provide practical, actionable advice
-- Include code examples when relevant
-- Explain complex concepts clearly
-- Prioritize security and best practices
-- Use tools when you need to perform actual operations
-- Validate configurations before suggesting changes
-
-**Response Format:**
-- Be comprehensive but concise
-- Use emojis for visual clarity
-- Structure information clearly
-- Always suggest next steps
-- Include relevant warnings for destructive operations
+Diretrizes:
+- Sempre considere segurança primeiro
+- Sugira comandos específicos quando relevante
+- Explique o "porquê" além do "como"
+- Mencione anti-padrões a evitar
+- Forneça exemplos práticos de código
 """
 
-# Initialize the Turso Specialist Agent - PydanticAI pattern
-turso_specialist_agent = Agent(
-    model=None,  # Will be set by get_llm_model()
-    deps_type=TursoAgentDependencies,
-    system_prompt=SYSTEM_PROMPT
+# Criar o agente Turso especialista
+turso_agent = Agent(
+    get_llm_model(),
+    deps_type=TursoContext,
+    system_prompt=TURSO_SYSTEM_PROMPT
 )
+
+
+@turso_agent.system_prompt
+def dynamic_turso_prompt(ctx: RunContext[TursoContext]) -> str:
+    """Prompt dinâmico que adapta baseado no contexto"""
+    prompt_parts = []
+    
+    if ctx.deps.current_database:
+        prompt_parts.append(f"Database atual: {ctx.deps.current_database}")
+    
+    if ctx.deps.user_role:
+        prompt_parts.append(f"Usuário é um {ctx.deps.user_role}")
+    
+    if ctx.deps.conversation_count > 3:
+        prompt_parts.append("Esta é uma conversa longa, seja mais conciso")
+    
+    # Adicionar contexto do PRP se disponível
+    if ctx.deps.prp_context:
+        turso_ecosystem = ctx.deps.prp_context.get('context_data', {}).get('turso_ecosystem', {})
+        if turso_ecosystem:
+            features = turso_ecosystem.get('key_features', [])
+            if features:
+                prompt_parts.append(f"Lembre-se das features Turso: {', '.join(features[:3])}")
+    
+    return " | ".join(prompt_parts) if prompt_parts else ""
 
 @turso_specialist_agent.tool
 async def list_turso_databases(
