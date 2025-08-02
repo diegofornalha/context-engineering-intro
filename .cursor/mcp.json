@@ -7,7 +7,7 @@
     },
     "turso": {
       "type": "stdio",
-      "command": "./mcp-turso-cloud-diegofornalha/start-claude.sh",
+      "command": "./mcp-turso/start-claude.sh",
       "args": []
     }
   }
