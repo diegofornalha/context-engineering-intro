@@ -121,8 +121,11 @@
 
 ### **Próximos Passos:**
 - ✅ **Servidor MCP Turso:** Funcionando corretamente via stdio
-- ✅ **Ferramentas registradas:** 27 ferramentas disponíveis
+- ✅ **Ferramentas registradas:** 23 ferramentas disponíveis
 - ✅ **Configuração corrigida:** TURSO_API_TOKEN adicionado
+- ✅ **MCP Turso conectado:** `turso: ./mcp-turso/start-claude.sh - ✓ Connected`
+- ⚠️ **Problema identificado:** Cursor Agent não consegue usar ferramentas MCP Turso
+- [ ] Resolver problema de comunicação Cursor Agent ↔ MCP Turso
 - [ ] Testar ferramentas corrigidas via Cursor Agent (`add_conversation`, `add_knowledge`, `search_knowledge`)
 - [ ] Validar funcionamento completo do sistema de memória
 - [ ] Documentar padrões de uso das ferramentas MCP no Cursor Agent
