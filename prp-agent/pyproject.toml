@@ -1,0 +1,13 @@
+[project]
+name = "prp-agent"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.116.1",
+    "loguru>=0.7.3",
+    "pydantic>=2.11.7",
+    "python-dotenv>=1.1.1",
+    "sentry-sdk[fastapi]>=2.34.1",
+    "uvicorn>=0.35.0",
+]

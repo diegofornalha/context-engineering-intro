@@ -1,0 +1,2 @@
+# Sentry monitoring
+sentry-sdk[fastapi]==1.40.0

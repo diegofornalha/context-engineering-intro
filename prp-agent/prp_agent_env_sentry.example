@@ -1,0 +1,38 @@
+# 🚨 Configuração Sentry para PRP Agent
+# =====================================
+# Copie este arquivo para .env e configure suas credenciais
+
+# === SENTRY CONFIGURATION ===
+SENTRY_DSN=https://your-dsn-here@sentry.io/your-project-id
+SENTRY_ENVIRONMENT=development
+SENTRY_RELEASE=prp-agent@1.0.0
+SENTRY_DEBUG=true
+
+# === LLM CONFIGURATION (já existente) ===
+LLM_PROVIDER=openai
+LLM_API_KEY=your-openai-api-key-here
+LLM_MODEL=gpt-4o
+LLM_BASE_URL=https://api.openai.com/v1
+
+# === DATABASE CONFIGURATION ===
+DATABASE_PATH=../context-memory.db
+
+# === AGENT CONFIGURATION ===
+MAX_TOKENS_PER_ANALYSIS=4000
+ANALYSIS_TIMEOUT=30
+DEFAULT_SESSION_ID=prp-agent-session
+
+# === MONITORING CONFIGURATION ===
+ENABLE_SENTRY_MONITORING=true
+SENTRY_SAMPLE_RATE=1.0
+SENTRY_TRACES_SAMPLE_RATE=0.1
+
+# === MCP CONFIGURATION ===
+ENABLE_MCP_MONITORING=true
+MCP_TURSO_MONITORING=true
+MCP_SENTRY_INTEGRATION=true
+
+# === LOGGING CONFIGURATION ===
+LOG_LEVEL=INFO
+LOG_FILE=prp_agent.log
+ENABLE_SENTRY_LOGGING=true
