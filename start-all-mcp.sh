@@ -59,12 +59,12 @@ check_mcp_server "Turso" || echo "   Turso: Inativo"
 echo ""
 
 # Iniciar Sentry MCP
-start_server "Sentry MCP" "./sentry-mcp-cursor/start-cursor.sh" "node.*sentry"
+start_server "Sentry MCP" "./mcp-sentry/start-mcp.sh" "node.*sentry"
 
 echo ""
 
 # Iniciar Turso MCP  
-start_server "Turso MCP" "./mcp-turso-cloud/start-claude.sh" "node.*turso"
+start_server "Turso MCP" "./mcp-turso/dist/index.js" "node.*turso"
 
 echo ""
 

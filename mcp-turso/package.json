@@ -1,0 +1,78 @@
+{
+  "name": "@diegofornalha/mcp-turso-cloud",
+  "version": "1.2.0",
+  "description": "MCP server for Turso Database with enhanced sync and documentation features (Fork from context-engineering-intro)",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "mcp-turso-cloud": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc && chmod +x dist/index.js",
+    "start": "node dist/index.js",
+    "dev": "npx @modelcontextprotocol/inspector dist/index.js",
+    "changeset": "changeset",
+    "version": "changeset version",
+    "release": "pnpm run build && changeset publish"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "turso",
+    "database",
+    "vector-search",
+    "libsql",
+    "sqlite",
+    "sql",
+    "llm",
+    "ai",
+    "vector-database",
+    "embeddings",
+    "similarity-search",
+    "sync",
+    "documentation",
+    "clusters",
+    "smart-sync",
+    "context-engineering",
+    "fork",
+    "performance",
+    "diagnostics"
+  ],
+  "author": {
+    "name": "Diego Fornalha",
+    "email": "diegofornalha@gmail.com",
+    "url": "https://github.com/diegofornalha"
+  },
+  "contributors": [
+    {
+      "name": "Scott Spence",
+      "url": "https://github.com/spences10"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/diegofornalha/mcp-turso-cloud.git"
+  },
+  "homepage": "https://github.com/diegofornalha/mcp-turso-cloud",
+  "bugs": {
+    "url": "https://github.com/diegofornalha/mcp-turso-cloud/issues"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@changesets/cli": "^2.29.5",
+    "@types/node": "^24.0.13",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.15.1",
+    "@libsql/client": "^0.15.9",
+    "dotenv": "^17.2.0",
+    "zod": "^4.0.5"
+  }
+}
