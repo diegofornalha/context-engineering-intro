@@ -197,7 +197,7 @@ export async function get_database_details(
 
 /**
  * Generate a new token for a database
- * This is a wrapper around the token-manager's generate_database_token function
+ * This is a wrapper around the token-manager's get_database_token function
  * to make it available through the organization client
  */
 export async function generate_database_token(
@@ -205,8 +205,8 @@ export async function generate_database_token(
 	permission: 'full-access' | 'read-only' = 'full-access',
 ): Promise<string> {
 	// Import here to avoid circular dependencies
-	const { generate_database_token: generate_token } = await import(
+	const { get_database_token } = await import(
 		'./token-manager.js'
 	);
-	return generate_token(database_name, permission);
+	return get_database_token(database_name, permission);
 }

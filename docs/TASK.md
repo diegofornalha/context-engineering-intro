@@ -106,17 +106,24 @@
 
 ## 🔍 **Descoberto Durante o Trabalho**
 
-### **2025-08-02 - Correções MCP Turso**
+### **2025-08-02 - Correções e Melhorias MCP Turso**
 - ✅ **Problema identificado:** Ferramentas de memória com erro de parâmetros
 - ✅ **Solução aplicada:** Conversão de parâmetros posicionais para nomeados
 - ✅ **Documentação criada:** Distinção clara entre MCP Claude vs Cursor Agent
 - ✅ **Arquivos modificados:** `mcp-turso/src/tools/handler.ts`
 - ✅ **Recompilação:** MCP Turso atualizado com correções
+- ✅ **Melhorias implementadas:** Sistema de refresh automático de tokens
+- ✅ **Novo token-manager:** Cache inteligente com expiração
+- ✅ **Plano de melhorias:** Criado `mcp-turso/IMPROVEMENTS_PLAN.md`
 
 ### **Próximos Passos:**
 - [ ] Testar ferramentas corrigidas (`add_conversation`, `add_knowledge`, `search_knowledge`)
 - [ ] Validar funcionamento completo do sistema de memória
 - [ ] Documentar padrões de uso das ferramentas MCP no Cursor Agent
+- [ ] Implementar novas ferramentas MCP baseadas na documentação oficial
+- [ ] Adicionar sistema de connection pooling
+- [ ] Implementar retry automático com backoff exponencial
+- [ ] Adicionar health checks automáticos
 
 ---
 

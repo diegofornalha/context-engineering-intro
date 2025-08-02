@@ -344,6 +344,155 @@ export function register_tools(server: Server): void {
 					required: [],
 				},
 			},
+
+			// Enhanced Database Management Tools (Based on Turso Docs)
+			{
+				name: 'get_database_info',
+				description: 'Get detailed information about a database',
+				inputSchema: {
+					type: 'object',
+					properties: {
+						database: {
+							type: 'string',
+							description: 'Database name',
+						},
+					},
+					required: ['database'],
+				},
+			},
+			{
+				name: 'list_database_tokens',
+				description: 'List all tokens for a database',
+				inputSchema: {
+					type: 'object',
+					properties: {
+						database: {
+							type: 'string',
+							description: 'Database name',
+						},
+					},
+					required: ['database'],
+				},
+			},
+			{
+				name: 'create_database_token',
+				description: 'Create a new token for a database',
+				inputSchema: {
+					type: 'object',
+					properties: {
+						database: {
+							type: 'string',
+							description: 'Database name',
+						},
+						permission: {
+							type: 'string',
+							enum: ['full-access', 'read-only'],
+							description: 'Permission level for the token',
+						},
+						expiration: {
+							type: 'string',
+							description: 'Token expiration (ISO format, optional)',
+						},
+					},
+					required: ['database'],
+				},
+			},
+			{
+				name: 'revoke_database_token',
+				description: 'Revoke a database token',
+				inputSchema: {
+					type: 'object',
+					properties: {
+						database: {
+							type: 'string',
+							description: 'Database name',
+						},
+						token_id: {
+							type: 'string',
+							description: 'Token ID to revoke',
+						},
+					},
+					required: ['database', 'token_id'],
+				},
+			},
+			{
+				name: 'get_database_usage',
+				description: 'Get database usage metrics',
+				inputSchema: {
+					type: 'object',
+					properties: {
+						database: {
+							type: 'string',
+							description: 'Database name',
+						},
+						period: {
+							type: 'string',
+							enum: ['1h', '24h', '7d', '30d'],
+							description: 'Time period for metrics',
+						},
+					},
+					required: ['database'],
+				},
+			},
+			{
+				name: 'backup_database',
+				description: 'Create a backup of a database',
+				inputSchema: {
+					type: 'object',
+					properties: {
+						database: {
+							type: 'string',
+							description: 'Database name',
+						},
+						backup_name: {
+							type: 'string',
+							description: 'Name for the backup (optional)',
+						},
+					},
+					required: ['database'],
+				},
+			},
+			{
+				name: 'restore_database',
+				description: 'Restore a database from backup',
+				inputSchema: {
+					type: 'object',
+					properties: {
+						database: {
+							type: 'string',
+							description: 'Database name',
+						},
+						backup_id: {
+							type: 'string',
+							description: 'Backup ID to restore from',
+						},
+					},
+					required: ['database', 'backup_id'],
+				},
+			},
+			{
+				name: 'get_token_cache_status',
+				description: 'Get status of cached tokens',
+				inputSchema: {
+					type: 'object',
+					properties: {},
+					required: [],
+				},
+			},
+			{
+				name: 'clear_token_cache',
+				description: 'Clear cached tokens',
+				inputSchema: {
+					type: 'object',
+					properties: {
+						database: {
+							type: 'string',
+							description: 'Database name (optional, clears all if not provided)',
+						},
+					},
+					required: [],
+				},
+			},
 		],
 	}));
 
