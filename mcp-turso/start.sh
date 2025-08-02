@@ -3,11 +3,17 @@
 # MCP Turso Server - Versão TypeScript para Claude Code
 cd "$(dirname "$0")"
 
-# Configurar variáveis de ambiente para o banco de memória
-export TURSO_DATABASE_URL="libsql://context-memory-diegofornalha.aws-us-east-1.turso.io"
-export TURSO_ORGANIZATION="diegofornalha"
-export TURSO_DEFAULT_DATABASE="context-memory"
-export TURSO_AUTH_TOKEN="eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTQxMTc5NjIsImlkIjoiOTUwY2ExMGUtN2EzMi00ODgwLTkyYjgtOTNkMTdmZTZjZTBkIiwicmlkIjoiZWU2YTJlNmYtMDViYy00NWIzLWEyOTgtN2Q0NzE3NTE0YjRiIn0.rnD-GZ4nA8dOvorMQ6GwM2yKSNT4KcKwwAzjdgzqK1ZUMoCOe_c23CusgnsBNr3m6WzejPMiy0HlrrMUfqZBCA"
+# Verificar se existe arquivo .env
+if [ ! -f ".env" ]; then
+    echo "❌ Arquivo .env não encontrado!"
+    echo "📝 Copie .env.example para .env e configure suas variáveis:"
+    echo "   cp .env.example .env"
+    echo "   # Edite o arquivo .env com suas configurações"
+    exit 1
+fi
+
+# Carregar variáveis de ambiente do arquivo .env
+export $(cat .env | grep -v '^#' | xargs)
 
 # Garantir que o projeto está compilado
 if [ ! -d "dist" ]; then

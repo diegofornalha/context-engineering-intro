@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { config } from "dotenv";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { createClient } from "@libsql/client";
@@ -6,6 +7,9 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
+
+// Load environment variables
+config();
 
 // Turso client
 let tursoClient: any = null;
