@@ -40,8 +40,8 @@ if [ -z "$TURSO_DATABASE_URL" ]; then
     exit 1
 fi
 
-if [ -z "$TURSO_API_TOKEN" ]; then
-    echo "❌ TURSO_API_TOKEN não configurado"
+if [ -z "$TURSO_AUTH_TOKEN" ]; then
+    echo "❌ TURSO_AUTH_TOKEN não configurado"
     exit 1
 fi
 
