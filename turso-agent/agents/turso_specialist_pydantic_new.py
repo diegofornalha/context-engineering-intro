@@ -34,7 +34,7 @@ class TursoSettings(BaseSettings):
     
     # Configuração do LLM
     llm_provider: str = Field(default="openai")
-    llm_api_key: str = Field(...)
+    llm_api_key: str = Field(default="test-key")  # Default para teste
     llm_model: str = Field(default="gpt-4")
     llm_base_url: str = Field(default="https://api.openai.com/v1")
     
@@ -45,33 +45,51 @@ class TursoSettings(BaseSettings):
     
     # Configuração MCP
     mcp_server_url: Optional[str] = Field(default=None)
+    mcp_server_host: Optional[str] = Field(default="localhost")
+    mcp_server_port: Optional[int] = Field(default=3000)
     mcp_enabled: bool = Field(default=True)
+    
+    # Configurações adicionais do .env existente
+    environment: Optional[str] = Field(default="development")
+    debug: Optional[bool] = Field(default=False)
+    log_level: Optional[str] = Field(default="INFO")
+    enable_audit_logging: Optional[bool] = Field(default=True)
+    token_cache_ttl: Optional[int] = Field(default=3600)
+    max_token_age: Optional[int] = Field(default=86400)
+    connection_pool_size: Optional[int] = Field(default=10)
+    query_timeout: Optional[int] = Field(default=30)
+    max_retries: Optional[int] = Field(default=3)
     
     class Config:
         env_file = ".env"
         case_sensitive = False
+        extra = "allow"  # Permitir campos extras
 
 
 def get_llm_model():
     """Obter modelo LLM configurado a partir das configurações de ambiente"""
     try:
+        # Tentar carregar configurações
         settings = TursoSettings()
+        
+        # Se não houver API key, usar TestModel para desenvolvimento
+        if settings.llm_api_key == "test-key" or not settings.llm_api_key:
+            logger.warning("Usando TestModel para desenvolvimento (sem API key real)")
+            from pydantic_ai.models.test import TestModel
+            return TestModel()
+            
+        # Caso contrário, usar o modelo configurado
         provider = OpenAIProvider(
             base_url=settings.llm_base_url,
             api_key=settings.llm_api_key
         )
         return OpenAIModel(settings.llm_model, provider=provider)
+        
     except Exception as e:
         logger.error(f"Erro ao carregar modelo LLM: {e}")
-        # Fallback para teste
-        import os
-        os.environ.setdefault("LLM_API_KEY", "test-key")
-        settings = TursoSettings()
-        provider = OpenAIProvider(
-            base_url=settings.llm_base_url,
-            api_key="test-key"
-        )
-        return OpenAIModel(settings.llm_model, provider=provider)
+        # Fallback para TestModel
+        from pydantic_ai.models.test import TestModel
+        return TestModel()
 
 
 @dataclass
@@ -161,15 +179,29 @@ Diretrizes:
 """
 
 
-# Criar o agente Turso especialista
-turso_agent = Agent(
-    get_llm_model(),
-    deps_type=TursoContext,
-    system_prompt=TURSO_SYSTEM_PROMPT
-)
+# Criar o agente Turso especialista com lazy loading
+def create_turso_agent():
+    """Cria uma nova instância do agente Turso"""
+    agent = Agent(
+        get_llm_model(),
+        deps_type=TursoContext,
+        system_prompt=TURSO_SYSTEM_PROMPT
+    )
+    
+    # Registrar tools
+    agent.system_prompt(dynamic_turso_prompt)
+    agent.tool(list_databases)
+    agent.tool(check_database_status)
+    agent.tool(generate_query_example)
+    agent.tool(troubleshoot_error)
+    agent.tool_plain(get_mcp_setup_instructions)
+    
+    return agent
+
+# Instância global do agente
+turso_agent = None
 
 
-@turso_agent.system_prompt
 def dynamic_turso_prompt(ctx: RunContext[TursoContext]) -> str:
     """Prompt dinâmico que adapta baseado no contexto"""
     prompt_parts = []
@@ -194,7 +226,6 @@ def dynamic_turso_prompt(ctx: RunContext[TursoContext]) -> str:
     return " | ".join(prompt_parts) if prompt_parts else ""
 
 
-@turso_agent.tool
 async def list_databases(ctx: RunContext[TursoContext]) -> str:
     """Lista todos os databases Turso disponíveis"""
     try:
@@ -207,7 +238,6 @@ async def list_databases(ctx: RunContext[TursoContext]) -> str:
         return f"Erro ao listar databases: {str(e)}"
 
 
-@turso_agent.tool
 async def check_database_status(
     ctx: RunContext[TursoContext], 
     database_name: str
@@ -227,7 +257,6 @@ Status do database '{database_name}':
         return f"Erro ao verificar status: {str(e)}"
 
 
-@turso_agent.tool
 async def generate_query_example(
     ctx: RunContext[TursoContext],
     query_type: str
@@ -286,7 +315,6 @@ SELECT COUNT(*) as total_rows FROM users;
     return f"Exemplo de {query_type}:\n```sql\n{example}\n```"
 
 
-@turso_agent.tool
 async def troubleshoot_error(
     ctx: RunContext[TursoContext],
     error_message: str
@@ -343,7 +371,6 @@ Precisa de mais contexto para diagnóstico específico.
 """
 
 
-@turso_agent.tool_plain
 def get_mcp_setup_instructions() -> str:
     """Retorna instruções de setup MCP para Turso"""
     return """
@@ -403,6 +430,10 @@ async def chat_with_turso_agent(
     context.conversation_count += 1
     
     # Executar o agente com a mensagem e contexto
+    global turso_agent
+    if turso_agent is None:
+        turso_agent = create_turso_agent()
+    
     result = await turso_agent.run(message, deps=context)
     
     return result.data
@@ -428,6 +459,10 @@ def chat_with_turso_agent_sync(
     context.conversation_count += 1
     
     # Executar sincronamente
+    global turso_agent
+    if turso_agent is None:
+        turso_agent = create_turso_agent()
+        
     result = turso_agent.run_sync(message, deps=context)
     
     return result.data
