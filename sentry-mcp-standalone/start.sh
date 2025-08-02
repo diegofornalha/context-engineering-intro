@@ -1,21 +1,18 @@
 #!/bin/bash
 
-# MCP Sentry Server
+# Script de inicialização para Cursor MCP
 # Uso: ./start.sh
 
-cd "$(dirname "$0")"
-
-# Carregar variáveis de ambiente do .env se existir
-if [ -f .env ]; then
-    set -a
-    source .env
-    set +a
+# Carregar configurações do config.env se existir
+if [ -f "config.env" ]; then
+    source config.env
 fi
 
-# Compilar se necessário
+# Verificar se o projeto foi compilado
 if [ ! -d "dist" ]; then
-    npm run build || exit 1
+    echo "Compilando projeto..." >&2
+    npm run build
 fi
 
-# Iniciar servidor
-exec node dist/index.js "$@"
+# Iniciar o servidor MCP
+node dist/index.js

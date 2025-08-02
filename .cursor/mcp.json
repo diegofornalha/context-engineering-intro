@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "sentry": {
+      "type": "stdio",
+      "command": "./sentry-mcp-standalone/start-cursor.sh",
+      "args": []
+    }
+  }
+} 
