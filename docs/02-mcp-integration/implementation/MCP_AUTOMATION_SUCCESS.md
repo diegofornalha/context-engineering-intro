@@ -138,7 +138,7 @@ python sentry_ai_agent_setup.py
 ### **📁 Documentação:**
 - ✅ `GUIA_AI_AGENT_MONITORING.md` - Guia técnico completo
 - ✅ `INSTRUCOES_NOVAS_CONFIG_SENTRY.md` - Passo-a-passo manual
-- ✅ `AUTOMACAO_MCP_CONCLUIDA.md` - Este arquivo
+- ✅ `MCP_AUTOMATION_SUCCESS.md` - Este arquivo
 
 ---
 
