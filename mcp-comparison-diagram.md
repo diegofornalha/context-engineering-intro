@@ -1,96 +1,197 @@
-# 🔄 Diagrama Comparativo: MCP Sentry (Claude Code vs Cursor)
+# 🔵 Diagrama de Arquitetura: Claude Code MCP Sentry
 
-## Diagrama de Arquitetura e Relações
+## Diagrama de Arquitetura e Componentes
 
-![Diagrama Comparativo MCP Sentry](claude-code.png)
+![Diagrama Claude Code MCP Sentry](claude-code.png)
 
-## 📊 Tabela Comparativa Detalhada
+## 📋 Análise Detalhada do Diagrama
 
-| Aspecto | MCP Claude Code | MCP Cursor |
-|---------|-----------------|------------|
-| **Localização** | `/mcp-sentry` | `/sentry-mcp-cursor` |
-| **Ferramentas** | 27 (12 SDK + 15 API) | 27 (12 SDK + 15 API) |
-| **Configuração** | `.env` e `config.env` | `config.env` e `.cursor/mcp.json` |
-| **Script Principal** | `start.sh` | `start-cursor.sh` |
-| **Instalação** | `add-to-claude-code.sh` | `add-to-cursor.sh` ✨ |
-| **Monitor** | `monitor.sh` ✅ | `monitor.sh` ✨ |
-| **Prefixo Tools** | `mcp__sentry__` | `mcp__sentry__` |
-| **Registro** | `~/.claude.json` | `.cursor/mcp.json` |
+### 🎯 **Visão Geral**
+O diagrama mostra a arquitetura completa do **Claude Code MCP Sentry**, ilustrando como os componentes se interconectam para fornecer 27 ferramentas de monitoramento e observabilidade.
 
-## 🔄 Fluxo de Execução
+---
 
-### Claude Code:
+## 🏗️ **Componentes Principais**
+
+### 1. **📜 Scripts de Gerenciamento (Seção Superior)**
+**Localização:** Retângulo azul claro na parte superior
+
+**Scripts Disponíveis:**
+- `start.sh` - Script principal de inicialização
+- `start-mcp.sh` - Inicialização específica do MCP
+- `start-standalone.sh` - Modo autônomo
+- `test-standalone.sh` - Testes da versão autônoma
+- `monitor.sh` - Monitoramento em tempo real
+- `add-to-claude-code.sh` - Adicionar ao Claude Code
+- `remove-from-claude-code.sh` - Remover do Claude Code
+
+### 2. **⚙️ Configuração (Seção Esquerda)**
+**Localização:** Retângulo amarelo claro
+
+**Arquivos de Configuração:**
+- `config.env` - Variáveis de ambiente principais
+- `.env` - Variáveis de ambiente alternativas
+- **Hardcoded env vars** - Variáveis embutidas no código
+
+**Fluxo:** `start.sh` → `config.env` e `.env`
+
+### 3. **🧠 Núcleo Central - index.ts**
+**Localização:** Retângulo verde claro no centro
+
+**Características:**
+- **27 ferramentas** integradas
+- Ponto central de toda a lógica
+- Recebe configurações dos scripts
+- Expõe ferramentas via prefixo `mcp__sentry__`
+
+### 4. **🔧 Módulos Internos**
+**Localização:** Caixas azuis claras abaixo do index.ts
+
+**Componentes:**
+- `sentry-api-client.ts` - Cliente para API do Sentry
+- `types.ts` - Definições de tipos TypeScript
+
+---
+
+## 🛠️ **Ferramentas Disponíveis**
+
+### **SDK Tools (12 ferramentas)**
+**Localização:** Caixa verde clara no lado direito
+
+**Ferramentas Principais:**
+- `capture_exception` - Captura de exceções
+- `capture_message` - Captura de mensagens
+- `add_breadcrumb` - Trilhas de eventos
+- `set_user/tag/context` - Definição de contexto
+- `start/finish_transaction` - Monitoramento de performance
+- `start/end_session` - Gestão de sessões
+
+### **API Tools (15 ferramentas)**
+**Localização:** Caixa verde clara conectada às SDK Tools
+
+**Ferramentas Principais:**
+- `list_projects/issues` - Listagem de projetos e issues
+- `create/list_releases` - Gestão de releases
+- `resolve_short_id` - Resolução de IDs curtos
+- `get_event/issue` - Obtenção de detalhes
+- `setup_project` - Configuração de projetos
+- `search_errors_in_file` - Busca de erros por arquivo
+
+---
+
+## ☁️ **Integração Sentry Cloud**
+
+### **Serviços Sentry (Seção Inferior)**
+**Localização:** Retângulo marrom na parte inferior
+
+**Componentes:**
+- `API Sentry` - Interface de programação
+- `SDK Sentry` - Kit de desenvolvimento
+- `Dashboard coflow.sentry.io` - Painel de controle
+
+**Conexões:**
+- `sentry-api-client.ts` → `API Sentry`
+- `types.ts` → `SDK Sentry`
+
+---
+
+## 📝 **Configuração Global**
+
+### **Arquivo de Registro**
+**Localização:** Retângulo amarelo claro no canto superior direito
+
+**Componente:** `~/.claude.json`
+
+**Função:** 
+- Registro global do MCP no Claude Code
+- Configuração via `add-to-claude-code.sh`
+- Prefixo `mcp__sentry__` para acesso às ferramentas
+
+---
+
+## 🔄 **Fluxo de Execução**
+
 ```
-1. ./add-to-claude-code.sh
+1. Scripts de Inicialização (start.sh, start-mcp.sh)
    ↓
-2. Registra em ~/.claude.json
+2. Carregamento de Configuração (config.env, .env)
    ↓
-3. Claude Code carrega start.sh
+3. Inicialização do Núcleo (index.ts)
    ↓
-4. start.sh → config.env/.env
+4. Carregamento de Módulos (sentry-api-client.ts, types.ts)
    ↓
-5. Inicia node dist/index.js
+5. Conexão com Sentry Cloud (API + SDK)
    ↓
-6. 27 ferramentas disponíveis com prefixo mcp__sentry__
+6. Exposição de 27 Ferramentas (12 SDK + 15 API)
+   ↓
+7. Acesso via Prefixo mcp__sentry__
 ```
 
-### Cursor:
+---
+
+## 🎯 **Características Técnicas**
+
+### **Arquitetura:**
+- ✅ **Modular** - Componentes bem separados
+- ✅ **Configurável** - Múltiplas opções de configuração
+- ✅ **Extensível** - 27 ferramentas disponíveis
+- ✅ **Integrado** - Conexão completa com Sentry
+
+### **Funcionalidades:**
+- 🔍 **Monitoramento** - Captura de erros e eventos
+- 📊 **Performance** - Transações e métricas
+- 👥 **Contexto** - Informações de usuário e sessão
+- 🚀 **Releases** - Gestão de versões
+- 🔧 **API Completa** - Acesso a todos os recursos Sentry
+
+---
+
+## 💡 **Benefícios da Arquitetura**
+
+1. **Simplicidade de Uso** - Scripts automatizados para setup
+2. **Flexibilidade** - Múltiplas opções de configuração
+3. **Completude** - Todas as funcionalidades Sentry disponíveis
+4. **Integração Nativa** - Funciona perfeitamente com Claude Code
+5. **Monitoramento Real-time** - Acompanhamento contínuo via monitor.sh
+
+---
+
+## 🚀 **Como Usar**
+
+### **Setup Inicial:**
+```bash
+cd mcp-sentry
+./add-to-claude-code.sh
 ```
-1. ./add-to-cursor.sh
-   ↓
-2. Registra em .cursor/mcp.json
-   ↓
-3. Cursor carrega start-cursor.sh
-   ↓
-4. start-cursor.sh → config.env (com fallback)
-   ↓
-5. Inicia node dist/index.js
-   ↓
-6. 27 ferramentas disponíveis com prefixo mcp__sentry__
+
+### **Inicialização:**
+```bash
+./start.sh
+# ou
+./start-standalone.sh
 ```
 
-## 🎯 Principais Diferenças
+### **Monitoramento:**
+```bash
+./monitor.sh
+```
 
-### 1. **Scripts de Inicialização**
-- **Claude Code**: `start.sh` (genérico)
-- **Cursor**: `start-cursor.sh` (otimizado para Cursor)
+### **Testes:**
+```bash
+./test-standalone.sh
+```
 
-### 2. **Configuração**
-- **Claude Code**: Usa `.env` ou `config.env`
-- **Cursor**: Prioriza `config.env` com fallback hardcoded
+---
 
-### 3. **Registro**
-- **Claude Code**: Global em `~/.claude.json`
-- **Cursor**: Local em `.cursor/mcp.json`
+## 🎉 **Conclusão**
 
-### 4. **Scripts Exclusivos**
-- **Claude Code**: Originou `monitor.sh`
-- **Cursor**: Adicionou `add-to-cursor.sh`
+O diagrama mostra uma arquitetura **robusta e bem estruturada** do Claude Code MCP Sentry, com:
 
-### 5. **Melhorias Cross-Platform**
-- Monitor do Claude Code → Adaptado para Cursor
-- Config.env do Cursor → Pode beneficiar Claude Code
+- **7 scripts** para diferentes cenários de uso
+- **2 arquivos** de configuração flexíveis
+- **1 núcleo central** com 27 ferramentas
+- **2 módulos** especializados (API + Types)
+- **3 serviços** Sentry integrados
+- **1 arquivo** de registro global
 
-## 🔗 Relações e Dependências
-
-### Compartilhado:
-- ✅ Mesmo código core (index.ts)
-- ✅ Mesmas 27 ferramentas
-- ✅ Mesmo cliente API
-- ✅ Mesmos tipos TypeScript
-- ✅ Mesmas credenciais Sentry
-
-### Diferente:
-- ❌ Métodos de registro
-- ❌ Scripts de inicialização
-- ❌ Localização da configuração
-- ❌ Scripts de instalação
-
-## 💡 Conclusão
-
-Ambos os MCPs são funcionalmente idênticos (27 ferramentas), mas diferem na:
-1. **Integração com o editor** (Claude Code vs Cursor)
-2. **Scripts de gerenciamento** (otimizados para cada plataforma)
-3. **Localização de configuração** (global vs local)
-
-As melhorias podem ser compartilhadas entre ambos, como demonstrado com o `monitor.sh`.
+**Resultado:** Sistema completo de observabilidade integrado ao Claude Code! 🎯
