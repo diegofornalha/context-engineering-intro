@@ -10,9 +10,54 @@ import logging
 from typing import List, Dict, Any, Optional
 from pydantic_ai import RunContext
 from .dependencies import PRPAgentDependencies
+from .settings import settings
 from datetime import datetime
 
 logger = logging.getLogger(__name__)
+
+def apply_portuguese_language_prompts(title: str, description: str, objective: str) -> tuple[str, str, str]:
+    """
+    Aplica prompts em português do Brasil automaticamente quando habilitado.
+    
+    Retorna: (title_pt, description_pt, objective_pt)
+    """
+    if not settings.use_default_language or settings.default_language != "pt-br":
+        return title, description, objective
+    
+    # Templates em português para PRPs
+    pt_prompts = {
+        "title_prefix": "Crie um título em português do Brasil para este PRP:",
+        "description_prefix": """
+Reescreva a descrição a seguir em português do Brasil, mantendo todos os detalhes técnicos.
+Use uma linguagem clara, profissional e organizada. Estruture com emojis e seções quando apropriado:
+
+Descrição original:
+""",
+        "objective_prefix": """
+Reescreva o objetivo a seguir em português do Brasil de forma clara e acionável.
+Inclua metas específicas, métricas quando possível, e mantenha o foco nos resultados esperados:
+
+Objetivo original:
+"""
+    }
+    
+    # Se já está em português, não modifica
+    portuguese_indicators = ["português", "brasil", "brasileiro", "pt-br", "🇧🇷"]
+    is_already_portuguese = any(indicator in (title + description + objective).lower() 
+                               for indicator in portuguese_indicators)
+    
+    if is_already_portuguese:
+        logger.info("🇧🇷 Conteúdo já está em português, mantendo original")
+        return title, description, objective
+    
+    # Adiciona instruções para conversão automática
+    enhanced_title = f"[PORTUGUÊS DO BRASIL] {title}"
+    enhanced_description = f"{pt_prompts['description_prefix']}{description}"
+    enhanced_objective = f"{pt_prompts['objective_prefix']}{objective}"
+    
+    logger.info(f"🇧🇷 Aplicando configuração de idioma português do Brasil ao PRP: {title}")
+    
+    return enhanced_title, enhanced_description, enhanced_objective
 
 def get_db_connection(db_path: str):
     """Obter conexão com banco de dados."""
@@ -39,6 +84,9 @@ async def create_prp(
     """Cria um novo PRP no banco de dados."""
     
     try:
+        # Aplicar configuração de idioma português automaticamente
+        title, description, objective = apply_portuguese_language_prompts(title, description, objective)
+        
         conn = get_db_connection(ctx.deps.database_path)
         cursor = conn.cursor()
         
