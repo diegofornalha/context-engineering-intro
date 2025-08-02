@@ -1,0 +1,11 @@
+
+# Comandos MCP para Migração do Sistema de Memória
+# Do mcp-turso para mcp-turso-cloud
+# Gerado em: 02/08/2025 04:35
+
+# 1. Configurar tabelas de memória
+setup_memory_tables(database="cursor10x-memory")
+
+# 2. Migrar conversas
+
+# 3. Migrar conhecimento

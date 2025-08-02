@@ -1,0 +1,25 @@
+
+# Comandos para Testar Múltiplos .env
+# Data: 02/08/2025 04:42
+
+# 1. Testar carregamento
+cd mcp-turso-cloud
+npm run build
+node dist/index.js
+
+# 2. Verificar logs de configuração
+# Procure por mensagens como:
+# [Config] Loading environment files...
+# [Config] ✅ Loaded: .env
+# [Config] ✅ Loaded: mcp-turso-cloud/.env
+# [Config] ✅ Configuration loaded successfully
+
+# 3. Testar com diferentes arquivos .env
+# Crie um arquivo .env no diretório raiz com:
+TURSO_API_TOKEN=seu_token_aqui
+TURSO_ORGANIZATION=diegofornalha
+TURSO_DEFAULT_DATABASE=cursor10x-memory
+
+# 4. Verificar se as configurações são carregadas
+# O mcp-turso-cloud deve carregar automaticamente
+# todos os arquivos .env disponíveis

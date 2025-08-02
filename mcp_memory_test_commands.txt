@@ -1,0 +1,37 @@
+
+# Comandos MCP para Testar Sistema de Memória
+# Data: 02/08/2025 04:38
+
+# 1. Configurar tabelas de memória
+setup_memory_tables(database="cursor10x-memory")
+
+# 2. Adicionar conversa de teste
+add_conversation(
+    session_id="test-session-1754120306",
+    message="Olá! Esta é uma mensagem de teste do sistema de memória.",
+    response="Olá! Recebi sua mensagem e vou armazená-la na memória de longo prazo.",
+    database="cursor10x-memory"
+)
+
+# 3. Adicionar conhecimento de teste
+add_knowledge(
+    topic="Sistema de Memória",
+    content="O sistema de memória de longo prazo permite armazenar conversas e conhecimento para uso futuro.",
+    tags="memoria,teste,sistema",
+    database="cursor10x-memory"
+)
+
+# 4. Recuperar conversas
+get_conversations(database="cursor10x-memory")
+
+# 5. Buscar conhecimento
+search_knowledge(query="memoria", database="cursor10x-memory")
+
+# 6. Verificar tabelas criadas
+list_tables(database="cursor10x-memory")
+
+# 7. Descrever tabela de conversas
+describe_table(table="conversations", database="cursor10x-memory")
+
+# 8. Descrever tabela de conhecimento
+describe_table(table="knowledge_base", database="cursor10x-memory")
