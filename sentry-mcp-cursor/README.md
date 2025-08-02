@@ -1,120 +1,185 @@
-# MCP Sentry Standalone
+# 🚀 MCP Sentry para Cursor - Model Context Protocol Server
 
-## 🚀 Instância Independente do MCP Sentry
+Um servidor MCP completo para integração com Sentry no Cursor, oferecendo 27 ferramentas para monitoramento de erros, performance e saúde de aplicações.
 
-Esta é uma instância standalone do MCP (Model Context Protocol) Sentry, configurada e validada para uso independente.
+## ✨ Características
 
-## ✅ Status de Validação
+- **27 Ferramentas Completas**: 12 SDK + 15 API
+- **Release Health**: Monitoramento completo de sessões
+- **Performance Monitoring**: Transações e spans
+- **Alertas Customizados**: Regras de alerta automatizadas
+- **Busca Avançada**: Por arquivo, short ID, queries complexas
+- **Setup Automático**: Configuração de projetos com um comando
+- **Monitor em Tempo Real**: Script de monitoramento incluído
 
-**Credenciais Validadas:**
-- ✅ **DSN**: `https://782bbb46ddaa4e64a9a705e64f513985@o927801.ingest.us.sentry.io/5877334`
-- ✅ **Auth Token**: Válido e funcionando
-- ✅ **Organização**: `coflow` (ID: 927801)
-- ✅ **API URL**: `https://sentry.io/api/0`
+## 🛠️ Instalação Rápida
 
-## 🛠️ Ferramentas Disponíveis
-
-### SDK Tools (12 ferramentas)
-- `sentry_capture_exception` - Captura e envia exceções
-- `sentry_capture_message` - Captura e envia mensagens
-- `sentry_add_breadcrumb` - Adiciona breadcrumbs
-- `sentry_set_user` - Define contexto de usuário
-- `sentry_set_tag` - Define tags
-- `sentry_set_context` - Define contexto customizado
-- `sentry_start_transaction` - Inicia transação de performance
-- `sentry_finish_transaction` - Finaliza transação
-- `sentry_start_session` - Inicia sessão (Release Health)
-- `sentry_end_session` - Finaliza sessão
-- `sentry_set_release` - Define versão de release
-- `sentry_capture_session` - Captura sessão manual
-
-### API Tools (15 ferramentas)
-- `sentry_list_projects` - Lista projetos
-- `sentry_list_issues` - Lista issues
-- `sentry_create_release` - Cria release
-- `sentry_list_releases` - Lista releases
-- `sentry_get_organization_stats` - Estatísticas da organização
-- `sentry_create_alert_rule` - Cria regra de alerta
-- `sentry_resolve_short_id` - Resolve IDs curtos
-- `sentry_get_event` - Obtém evento específico
-- `sentry_list_error_events_in_project` - Lista eventos de erro
-- `sentry_create_project` - Cria projeto
-- `sentry_list_issue_events` - Lista eventos de issue
-- `sentry_get_issue` - Obtém detalhes de issue
-- `sentry_list_organization_replays` - Lista replays
-- `sentry_setup_project` - Setup automático com DSN
-- `sentry_search_errors_in_file` - Busca erros por arquivo
-
-## 🚀 Instalação Rápida
-
-### 1. Instalar Dependências
+### 1. Clone e Configure
 ```bash
+cd /Users/agents/Desktop/context-engineering-intro/sentry-mcp-cursor
 npm install
-```
-
-### 2. Compilar o Projeto
-```bash
 npm run build
 ```
 
-### 3. Configurar Variáveis de Ambiente
+### 2. Configure as Credenciais
 ```bash
-export SENTRY_DSN="https://782bbb46ddaa4e64a9a705e64f513985@o927801.ingest.us.sentry.io/5877334"
-export SENTRY_AUTH_TOKEN="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"
-export SENTRY_ORG="coflow"
-export SENTRY_API_URL="https://sentry.io/api/0"
+# Edite config.env com suas credenciais (já configurado)
+nano config.env
 ```
 
-### 4. Testar o MCP
+### 3. Adicione ao Cursor
 ```bash
-# Listar ferramentas disponíveis
-echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}' | node dist/index.js
-
-# Listar projetos
-echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "sentry_list_projects", "arguments": {}}}' | node dist/index.js
-
-# Enviar mensagem de teste
-echo '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "sentry_capture_message", "arguments": {"message": "Teste do MCP Standalone", "level": "info"}}}' | node dist/index.js
+./add-to-cursor.sh
 ```
 
-## 📊 Dashboard Sentry
+## 📚 Scripts Disponíveis
 
-Acesse seu dashboard em: **https://coflow.sentry.io**
+### 🚀 Inicialização
+- `./start-cursor.sh` - Script otimizado para Cursor
+- `./start-standalone.sh` - Inicia com validações e status detalhado
+- `./start.sh` - Script padrão
+- `./start-mcp.sh` - Script com configurações hardcoded
 
-## 🔧 Scripts Úteis
+### 🧪 Testes e Monitoramento
+- `./test-standalone.sh` - Executa suite completa de testes
+- `./monitor.sh` - **NOVO!** Monitor em tempo real com estatísticas
 
-- `./add-to-claude-code.sh` - Adiciona MCP ao Claude Code
-- `./remove-from-claude-code.sh` - Remove MCP do Claude Code
-- `./start.sh` - Inicia o servidor MCP
-- `npm run dev` - Modo desenvolvimento
-- `npm test` - Executa testes
+### 🔧 Gerenciamento
+- `./add-to-cursor.sh` - **NOVO!** Adiciona ao Cursor automaticamente
+- `./add-to-claude-code.sh` - Adiciona ao Claude Code
+- `./remove-from-claude-code.sh` - Remove do Claude Code
 
-## 📝 Exemplos de Uso
+## 🎯 Ferramentas Disponíveis
 
-### Capturar Exceção
-```bash
-echo '{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "sentry_capture_exception", "arguments": {"error": "Erro de teste", "level": "error"}}}' | node dist/index.js
+### SDK Tools (12)
+1. `mcp__sentry__sentry_capture_exception` - Captura exceções
+2. `mcp__sentry__sentry_capture_message` - Captura mensagens
+3. `mcp__sentry__sentry_add_breadcrumb` - Adiciona breadcrumbs
+4. `mcp__sentry__sentry_set_user` - Define usuário
+5. `mcp__sentry__sentry_set_tag` - Define tags
+6. `mcp__sentry__sentry_set_context` - Define contexto
+7. `mcp__sentry__sentry_start_transaction` - Inicia transação
+8. `mcp__sentry__sentry_finish_transaction` - Finaliza transação
+9. `mcp__sentry__sentry_start_session` - Inicia sessão
+10. `mcp__sentry__sentry_end_session` - Finaliza sessão
+11. `mcp__sentry__sentry_set_release` - Define release
+12. `mcp__sentry__sentry_capture_session` - Captura sessão
+
+### API Tools (15)
+1. `mcp__sentry__sentry_list_projects` - Lista projetos
+2. `mcp__sentry__sentry_list_issues` - Lista issues
+3. `mcp__sentry__sentry_create_release` - Cria release
+4. `mcp__sentry__sentry_list_releases` - Lista releases
+5. `mcp__sentry__sentry_get_organization_stats` - Estatísticas
+6. `mcp__sentry__sentry_create_alert_rule` - Cria alertas
+7. `mcp__sentry__sentry_resolve_short_id` - Resolve IDs curtos
+8. `mcp__sentry__sentry_get_event` - Obtém evento
+9. `mcp__sentry__sentry_list_error_events_in_project` - Lista erros
+10. `mcp__sentry__sentry_create_project` - Cria projeto
+11. `mcp__sentry__sentry_list_issue_events` - Lista eventos de issue
+12. `mcp__sentry__sentry_get_issue` - Obtém issue
+13. `mcp__sentry__sentry_list_organization_replays` - Lista replays
+14. `mcp__sentry__sentry_setup_project` - Setup de projeto
+15. `mcp__sentry__sentry_search_errors_in_file` - Busca erros em arquivo
+
+## 💡 Uso no Cursor
+
+No Cursor, as ferramentas ficam disponíveis com o prefixo `mcp__sentry__`:
+
+```javascript
+// Capturar exceção
+await mcp__sentry__sentry_capture_exception({
+  error: "Database connection failed",
+  level: "error",
+  tags: {
+    component: "database"
+  }
+});
+
+// Listar projetos
+await mcp__sentry__sentry_list_projects();
+
+// Criar release
+await mcp__sentry__sentry_create_release({
+  version: "app@1.0.0",
+  projects: ["coflow"]
+});
 ```
 
-### Listar Issues
+## 📊 Monitor em Tempo Real
+
+Execute o monitor para acompanhar estatísticas:
 ```bash
-echo '{"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "sentry_list_issues", "arguments": {"projectSlug": "coflow", "query": "is:unresolved"}}}' | node dist/index.js
+./monitor.sh
 ```
 
-### Criar Release
+O monitor exibe:
+- Status do servidor MCP
+- Configuração no Cursor
+- Estatísticas das últimas 24h
+- Issues não resolvidas
+- Última release
+- Total de ferramentas disponíveis
+- Atualização automática a cada 30s
+
+## 🧪 Testes
+
+Execute a suite completa de testes:
 ```bash
-echo '{"jsonrpc": "2.0", "id": 3, "method": "tools/call", "params": {"name": "sentry_create_release", "arguments": {"version": "myapp@1.0.0", "projects": ["coflow"]}}}' | node dist/index.js
+./test-standalone.sh
 ```
 
-## 🎯 Resultados de Teste
+## 🔍 Troubleshooting
 
-**Projetos Encontrados:** 1 projeto (coflow)
-**Issues Ativas:** 6 issues
-**Release Criado:** mcp-sentry@1.0.0
-**Status:** ✅ Funcionando perfeitamente
+### Servidor não aparece no Cursor
+```bash
+# Verificar configuração
+cat ../.cursor/mcp.json
+
+# Reinstalar
+./add-to-cursor.sh
+
+# Reiniciar Cursor
+```
+
+### Monitor não encontra servidor
+```bash
+# Verificar se o servidor está rodando
+ps aux | grep "node dist/index.js"
+
+# Reiniciar servidor no Cursor
+```
+
+## 📝 Configuração
+
+### config.env
+```bash
+SENTRY_DSN=https://782bbb46ddaa4e64a9a705e64f513985@o927801.ingest.us.sentry.io/5877334
+SENTRY_AUTH_TOKEN=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
+SENTRY_ORG=coflow
+SENTRY_API_URL=https://sentry.io/api/0/
+SENTRY_RELEASE=mcp-sentry-cursor@1.0.0
+SENTRY_ENVIRONMENT=production
+```
+
+## 🎯 Melhorias Implementadas
+
+### Do MCP Claude Code:
+- ✅ Script `monitor.sh` para monitoramento em tempo real
+- ✅ Script `add-to-cursor.sh` para instalação automatizada
+- ✅ Melhor suporte para `config.env` no `start-cursor.sh`
+- ✅ Documentação atualizada com prefixos do Cursor
+
+## 🔗 Links Úteis
+
+- [Documentação Sentry](https://docs.sentry.io)
+- [MCP SDK](https://github.com/modelcontextprotocol/sdk)
+- [Dashboard Sentry](https://coflow.sentry.io)
+
+## 📄 Licença
+
+MIT
 
 ---
 
-**Criado em:** 02/08/2025
-**Versão:** 1.0.0
-**Organização:** coflow 
+Desenvolvido com ❤️ para Cursor

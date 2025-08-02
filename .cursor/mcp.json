@@ -4,11 +4,6 @@
       "type": "stdio",
       "command": "./sentry-mcp-cursor/start-cursor.sh",
       "args": []
-    },
-    "turso": {
-      "type": "stdio",
-      "command": "./cursor10x-mcp/start-turso-cursor.sh",
-      "args": []
     }
   }
 } 
